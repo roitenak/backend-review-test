@@ -14,7 +14,7 @@ class Repo
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="bigint")
+     * @ORM\Column(type="bigint_to_int")
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private int $id;
@@ -36,17 +36,17 @@ class Repo
         $this->url = $url;
     }
 
-    public function id(): int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function url(): string
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -58,5 +58,14 @@ class Repo
             $data['name'],
             $data['url']
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'url' => $this->url,
+        ];
     }
 }
