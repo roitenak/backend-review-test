@@ -7,12 +7,7 @@ use Doctrine\DBAL\Connection;
 
 class DbalReadEventRepository implements ReadEventRepository
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
+    public function __construct(private Connection $connection) {}
 
     public function countAll(SearchInput $searchInput): int
     {
@@ -53,7 +48,7 @@ SQL;
             GROUP BY TYPE, EXTRACT(hour from create_at)
 SQL;
 
-        $stats = $this->connection->fetchAll($sql, [
+        $stats = $this->connection->fetchAllAssociative($sql, [
             'date' => $searchInput->date
         ]);
 

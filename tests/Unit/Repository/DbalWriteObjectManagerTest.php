@@ -67,7 +67,7 @@ class DbalWriteObjectManagerTest extends TestCase
         $statement = $this->createMock(Statement::class);
         $statement->expects($this->once())
             ->method('executeStatement')
-            ->with([1, 'COM', 1, 1, 1, '{"payload":"value"}', $event->getCreateAt()->format('c'), 'comment']);
+            ->with([1, 'COM', 1, 1, 1, '{"payload":"value"}', $event->createAt->format('c'), 'comment']);
 
         $this->connection->expects($this->once())
             ->method('prepare')

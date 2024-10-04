@@ -70,12 +70,12 @@ class ImportGitHubEventsCommand extends Command
         foreach ($rows as $row) {
             try {
                 $event = $this->serializer->deserialize($row, Event::class, 'json');
-                $repo = $event->getRepo();
-                $actor = $event->getActor();
+                $repo = $event->repo;
+                $actor = $event->actor;
 
-                $repos[$repo->getId()] = $repo;
-                $actors[$actor->getId()] = $actor;
-                $events[$event->getId()] = $event;
+                $repos[$repo->id] = $repo;
+                $actors[$actor->id] = $actor;
+                $events[$event->id] = $event;
 
                 if ($n % self::BATCH_SIZE === 0) {
                     $this->processBatch($events, $repos, $actors);
