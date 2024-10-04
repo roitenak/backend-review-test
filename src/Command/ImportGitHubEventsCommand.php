@@ -28,10 +28,10 @@ class ImportGitHubEventsCommand extends Command
     private const INVALID_HOUR_MESSAGE = 'Invalid hour format. Please provide an hour between 0 and 23.';
 
     public function __construct(
-        private GHArchiveClient $ghArchiveClient,
-        private GzipJsonParser $parser,
-        private SerializerInterface $serializer,
-        private DbalWriteObjectManager $objectManager,
+        private readonly GHArchiveClient $ghArchiveClient,
+        private readonly GzipJsonParser $parser,
+        private readonly SerializerInterface $serializer,
+        private readonly DbalWriteObjectManager $objectManager,
     ) {
         parent::__construct();
     }
@@ -77,14 +77,14 @@ class ImportGitHubEventsCommand extends Command
                 $actors[$actor->id] = $actor;
                 $events[$event->id] = $event;
 
-                if ($n % self::BATCH_SIZE === 0) {
+                if (0 === $n % self::BATCH_SIZE) {
                     $this->processBatch($events, $repos, $actors);
-                    $output->writeln('Flushed after processing ' . $n . ' events.', OutputInterface::VERBOSITY_VERY_VERBOSE);
+                    $output->writeln('Flushed after processing '.$n.' events.', OutputInterface::VERBOSITY_VERY_VERBOSE);
                 }
             } catch (\Throwable $e) {
                 $output->writeln(sprintf('Error processing event: %s', $e->getMessage()), OutputInterface::VERBOSITY_VERBOSE);
             } finally {
-                $n++;
+                ++$n;
             }
         }
 

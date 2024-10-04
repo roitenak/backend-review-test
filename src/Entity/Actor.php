@@ -25,8 +25,9 @@ class Actor
 
         #[ORM\Column(type: 'string')]
         #[SerializedName('avatar_url')]
-        public string $avatarUrl
-    ) {}
+        public string $avatarUrl,
+    ) {
+    }
 
     public static function fromArray(array $data): self
     {

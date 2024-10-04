@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use Webmozart\Assert\Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: '`event`', indexes: [new ORM\Index(name: 'IDX_EVENT_TYPE', columns: ['type'])])]
@@ -21,11 +20,11 @@ class Event
         #[ORM\Column(type: 'EventType', nullable: false)]
         public string $type,
 
-        #[ORM\ManyToOne(targetEntity: 'App\Entity\Actor', cascade: ['persist'])]
+        #[ORM\ManyToOne(targetEntity: Actor::class, cascade: ['persist'])]
         #[ORM\JoinColumn(name: 'actor_id', referencedColumnName: 'id')]
         public Actor $actor,
 
-        #[ORM\ManyToOne(targetEntity: 'App\Entity\Repo', cascade: ['persist'])]
+        #[ORM\ManyToOne(targetEntity: Repo::class, cascade: ['persist'])]
         #[ORM\JoinColumn(name: 'repo_id', referencedColumnName: 'id')]
         public Repo $repo,
 
@@ -40,10 +39,10 @@ class Event
         public ?string $comment,
 
         #[ORM\Column(type: 'integer', nullable: false)]
-        public int $count = 1
+        public int $count = 1,
     ) {
         EventType::assertValidChoice($type);
-        $this->count = $type === EventType::COMMIT ? ($payload['size'] ?? 1) : 1;
+        $this->count = EventType::COMMIT === $type ? ($payload['size'] ?? 1) : 1;
     }
 
     public function toArray(): array

@@ -30,8 +30,9 @@ class DbalWriteObjectManager
     ];
 
     public function __construct(
-        private Connection $connection
-    ) {}
+        private readonly Connection $connection,
+    ) {
+    }
 
     public function upsert(string $class, array $objects): void
     {

@@ -16,7 +16,7 @@ class EventControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        static::$client = static::createClient();
+        self::$client = static::createClient();
 
         $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
         $metaData = $entityManager->getMetadataFactory()->getAllMetadata();
@@ -32,7 +32,7 @@ class EventControllerTest extends WebTestCase
 
     public function testUpdateShouldReturnEmptyResponse()
     {
-        $client = static::$client;
+        $client = self::$client;
 
         $client->request(
             'PUT',
@@ -49,7 +49,7 @@ class EventControllerTest extends WebTestCase
 
     public function testUpdateShouldReturnHttpNotFoundResponse()
     {
-        $client = static::$client;
+        $client = self::$client;
 
         $client->request(
             'PUT',
@@ -76,7 +76,7 @@ class EventControllerTest extends WebTestCase
      */
     public function testUpdateShouldReturnBadRequest(string $payload, string $expectedResponse)
     {
-        $client = static::$client;
+        $client = self::$client;
 
         $client->request(
             'PUT',
@@ -98,7 +98,7 @@ class EventControllerTest extends WebTestCase
             <<<JSON
               {
                 "comment": "short"
-                
+
             }
             JSON,
             <<<JSON
