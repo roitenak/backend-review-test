@@ -42,4 +42,9 @@ class EventNormalizer implements DenormalizerInterface
 
         return $this->normalizer->denormalize($data, $class, $format, $context);
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [Event::class => true];
+    }
 }
