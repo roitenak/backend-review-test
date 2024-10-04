@@ -7,21 +7,22 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: "repo")]
+#[ORM\Table(name: 'repo')]
 class Repo
 {
     public function __construct(
         #[ORM\Id]
-        #[ORM\Column(type: "bigint_to_int")]
-        #[ORM\GeneratedValue(strategy: "NONE")]
+        #[ORM\Column(type: 'bigint_to_int')]
+        #[ORM\GeneratedValue(strategy: 'NONE')]
         public int $id,
 
-        #[ORM\Column(type: "string")]
+        #[ORM\Column(type: 'string')]
         public string $name,
 
-        #[ORM\Column(type: "string")]
-        public string $url
-    ) {}
+        #[ORM\Column(type: 'string')]
+        public string $url,
+    ) {
+    }
 
     public static function fromArray(array $data): self
     {

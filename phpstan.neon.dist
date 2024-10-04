@@ -1,0 +1,9 @@
+parameters:
+	level: 5
+	bootstrapFiles:
+	    - vendor/autoload.php
+
+	paths:
+		- config
+		- src
+		- tests

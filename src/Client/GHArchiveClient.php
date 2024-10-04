@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Client;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GHArchiveClient
 {
     private const URL = 'https://data.gharchive.org/%s-%s.json.gz';
     private const DESTINATION = '/tmp/%s-%s.json.gz';
 
-    public function __construct(private HttpClientInterface $httpClient) {}
+    public function __construct(private readonly HttpClientInterface $httpClient)
+    {
+    }
 
     public function downloadEvents(string $date, string $hour, array $options = []): string
     {
@@ -35,7 +37,7 @@ class GHArchiveClient
                 }
             }
         } catch (\Exception $e) {
-            throw new \RuntimeException('Failed to download events: ' . $e->getMessage(), 0, $e);
+            throw new \RuntimeException('Failed to download events: '.$e->getMessage(), 0, $e);
         } finally {
             $file = null;
         }

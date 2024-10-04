@@ -20,11 +20,13 @@ class EventNormalizer implements DenormalizerInterface
         'PushEvent' => EventType::COMMIT,
     ];
 
-    public function __construct(private ObjectNormalizer $normalizer) {}
+    public function __construct(private readonly ObjectNormalizer $normalizer)
+    {
+    }
 
     public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
-        return $type === Event::class;
+        return Event::class === $type;
     }
 
     public function denormalize($data, $class, $format = null, array $context = []): Event

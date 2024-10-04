@@ -109,3 +109,15 @@ func-test: var/docker.up ## Run PhpUnit functionnal testsuite
 	@$(call log,Running ...)
 	$(PHP_EXEC) bin/phpunit -v --testsuite func --testdox
 	@$(call log_success,Done)
+
+.PHONY: quality-test
+quality-test: var/docker.up ## Run code quality tools
+	@$(call log,Running ...)
+	$(PHP_EXEC) vendor/bin/php-cs-fixer check --diff src & vendor/bin/rector -n & vendor/bin/phpstan
+	@$(call log_success,Done)
+
+.PHONY: quality-fix-test
+quality-fix-test: var/docker.up ## Run code quality tools with fixes
+	@$(call log,Running ...)
+	$(PHP_EXEC) vendor/bin/php-cs-fixer fix --diff src & vendor/bin/rector & vendor/bin/phpstan
+	@$(call log_success,Done)

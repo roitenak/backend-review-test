@@ -12,9 +12,10 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 class SearchController
 {
     public function __construct(
-        private ReadEventRepository $repository,
-        private DenormalizerInterface $serializer
-    ) {}
+        private readonly ReadEventRepository $repository,
+        private readonly DenormalizerInterface $serializer,
+    ) {
+    }
 
     #[Route(path: '/api/search', name: 'api_search', methods: ['GET'])]
     public function searchCommits(Request $request): JsonResponse
@@ -32,8 +33,8 @@ class SearchController
             ],
             'data' => [
                 'events' => $this->repository->getLatest($searchInput),
-                'stats' => $this->repository->statsByTypePerHour($searchInput)
-            ]
+                'stats' => $this->repository->statsByTypePerHour($searchInput),
+            ],
         ];
 
         return new JsonResponse($data);

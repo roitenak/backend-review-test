@@ -7,7 +7,9 @@ use Doctrine\DBAL\Connection;
 
 class DbalWriteEventRepository implements WriteEventRepository
 {
-    public function __construct(private Connection $connection) {}
+    public function __construct(private readonly Connection $connection)
+    {
+    }
 
     public function update(EventInput $authorInput, int $id): void
     {
