@@ -70,4 +70,19 @@ class DbalWriteObjectManagerTest extends TestCase
 
         $this->dbalWriteObjectManager->upsert(Event::class, [$event]);
     }
+
+    public function testUnsupportedClass()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Class SomeOtherClass is not supported');
+
+        $this->dbalWriteObjectManager->upsert('SomeOtherClass', []);
+    }
+
+    public function testEmptyObjects()
+    {
+        $this->connection->expects($this->never())->method('executeStatement');
+
+        $this->dbalWriteObjectManager->upsert(Repo::class, []);
+    }
 }

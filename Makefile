@@ -105,9 +105,15 @@ unit-test: vendor ## Run PhpUnit unit testsuite
 	@$(call log_success,Done)
 
 .PHONY: coverage
-coverage: vendor ## Run PhpUnit unit testsuite
+coverage: vendor ## Run PhpUnit code coverage
 	@$(call log,Running ...)
 	@$(PHP_RUN) vendor/bin/phpunit --coverage-text
+	@$(call log_success,Done)
+
+.PHONY: infection
+infection: vendor ## Run Infection
+	@$(call log,Running ...)
+	@$(PHP_RUN) vendor/bin/infection
 	@$(call log_success,Done)
 
 .PHONY: func-test
