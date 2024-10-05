@@ -50,22 +50,26 @@ class EventNormalizerTest extends TestCase
 
     public function testDenormalizeWithValidEventType(): void
     {
-        $data = ['type' => 'CommitCommentEvent'];
+        $data = ['type' => 'CommitCommentEvent', 'payload' => ['comment' => ['body' => 'comment body']]];
         $class = Event::class;
         $format = null;
         $context = [];
 
         $this->normalizer->expects($this->once())
             ->method('denormalize')
-            ->with(['type' => 'MSG'], $class, $format, $context)
+            ->with([
+                'type' => 'MSG',
+                'payload' => ['comment' => ['body' => 'comment body']],
+                'comment' => 'comment body'
+            ], $class, $format, $context)
             ->willReturn(new Event(
                 1,
                 'MSG',
                 new Actor(1, 'login', 'avatar', 'url'),
                 new Repo(1, 'name', 'url'),
-                [],
+                ['comment' => ['body' => 'comment body']],
                 new \DateTimeImmutable(),
-                null
+                'comment·body'
             ))
         ;
 

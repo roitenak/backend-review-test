@@ -12,12 +12,18 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class EventNormalizer implements DenormalizerInterface
 {
+    private const GH_EVENT_TYPE_COMMIT_COMMENT = 'CommitCommentEvent';
+    private const GH_EVENT_TYPE_ISSUE_COMMENT = 'IssueCommentEvent';
+    private const GH_EVENT_TYPE_PULL_REQUEST = 'PullRequestEvent';
+    private const GH_EVENT_TYPE_PULL_REQUEST_REVIEW_COMMENT = 'PullRequestReviewCommentEvent';
+    private const GH_EVENT_TYPE_PUSH = 'PushEvent';
+
     private const EVENT_TYPE_MAP = [
-        'CommitCommentEvent' => EventType::COMMENT,
-        'IssueCommentEvent' => EventType::COMMENT,
-        'PullRequestEvent' => EventType::PULL_REQUEST,
-        'PullRequestReviewCommentEvent' => EventType::COMMENT,
-        'PushEvent' => EventType::COMMIT,
+        self::GH_EVENT_TYPE_COMMIT_COMMENT => EventType::COMMENT,
+        self::GH_EVENT_TYPE_ISSUE_COMMENT => EventType::COMMENT,
+        self::GH_EVENT_TYPE_PULL_REQUEST => EventType::PULL_REQUEST,
+        self::GH_EVENT_TYPE_PULL_REQUEST_REVIEW_COMMENT => EventType::COMMENT,
+        self::GH_EVENT_TYPE_PUSH => EventType::COMMIT,
     ];
 
     public function __construct(private readonly ObjectNormalizer $normalizer)
@@ -32,6 +38,13 @@ class EventNormalizer implements DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = []): Event
     {
         if (isset($data['type']) && array_key_exists($data['type'], self::EVENT_TYPE_MAP)) {
+            match ($data['type']) {
+                self::GH_EVENT_TYPE_COMMIT_COMMENT,
+                self::GH_EVENT_TYPE_PULL_REQUEST_REVIEW_COMMENT => $data['comment'] = $data['payload']['comment']['body'],
+                self::GH_EVENT_TYPE_ISSUE_COMMENT => $data['comment'] = $data['comment']['body'],
+                default => null,
+            };
+
             $data['type'] = self::EVENT_TYPE_MAP[$data['type']];
         } else {
             throw new UnsupportedException('Invalid event type');
