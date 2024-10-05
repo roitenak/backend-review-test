@@ -15,6 +15,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Serializer\Exception\UnsupportedException;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
@@ -67,6 +68,8 @@ class ImportGitHubEventsCommand extends Command
         $actors = [];
         $events = [];
         $n = 0;
+        $discarded = 0;
+        $errors = 0;
         foreach ($rows as $row) {
             try {
                 $event = $this->serializer->deserialize($row, Event::class, 'json');
@@ -79,10 +82,14 @@ class ImportGitHubEventsCommand extends Command
 
                 if (0 === $n % self::BATCH_SIZE) {
                     $this->processBatch($events, $repos, $actors);
-                    $output->writeln('Flushed after processing '.$n.' events.', OutputInterface::VERBOSITY_VERY_VERBOSE);
+                    $output->writeln('[Info] Flushed after processing '.$n.' events.', OutputInterface::VERBOSITY_VERY_VERBOSE);
                 }
+            } catch (UnsupportedException $e) {
+                ++$discarded;
+                $output->writeln(sprintf('[Warning] While processing event: %s', $e->getMessage()), OutputInterface::VERBOSITY_VERY_VERBOSE);
             } catch (\Throwable $e) {
-                $output->writeln(sprintf('Error processing event: %s', $e->getMessage()), OutputInterface::VERBOSITY_VERBOSE);
+                ++$errors;
+                $output->writeln(sprintf('[Error] While processing event: %s', $e->getMessage()));
             } finally {
                 ++$n;
             }
@@ -91,7 +98,7 @@ class ImportGitHubEventsCommand extends Command
         $this->processBatch($events, $repos, $actors);
 
         $output->writeln(sprintf('Importing %s-%s.json.gz : Done!', $date, $hour));
-        $output->writeln("$n events processed.");
+        $output->writeln("$n events, $discarded discarded, $errors errors.");
 
         return Command::SUCCESS;
     }

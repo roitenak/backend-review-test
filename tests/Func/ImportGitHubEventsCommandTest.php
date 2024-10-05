@@ -32,7 +32,7 @@ class ImportGitHubEventsCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('2 events processed.', $output);
+        $this->assertStringContainsString('2 events, 0 discarded, 0 errors.', $output);
 
         unlink('./2024-10-01-10.json.gz');
     }
