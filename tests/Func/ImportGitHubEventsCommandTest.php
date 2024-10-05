@@ -10,6 +10,12 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ImportGitHubEventsCommandTest extends KernelTestCase
 {
+    public function tearDown(): void
+    {
+        restore_exception_handler();
+        parent::tearDown();
+    }
+
     public function testExecute(): void
     {
         self::bootKernel();

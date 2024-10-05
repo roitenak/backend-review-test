@@ -5,9 +5,10 @@ namespace App\Tests\Func;
 use App\DataFixtures\EventFixtures;
 use App\Entity\Event;
 use Doctrine\ORM\Tools\SchemaTool;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class EventControllerTest extends WebTestCase
 {
@@ -46,6 +47,11 @@ class EventControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(204);
     }
 
+    public function tearDown(): void
+    {
+        restore_exception_handler();
+        parent::tearDown();
+    }
 
     public function testUpdateShouldReturnHttpNotFoundResponse()
     {
@@ -71,9 +77,7 @@ class EventControllerTest extends WebTestCase
         self::assertJsonStringEqualsJsonString($expectedJson, $client->getResponse()->getContent());
     }
 
-    /**
-     * @dataProvider providePayloadViolations
-     */
+    #[DataProvider('providePayloadViolations')]
     public function testUpdateShouldReturnBadRequest(string $payload, string $expectedResponse)
     {
         $client = self::$client;
@@ -92,7 +96,7 @@ class EventControllerTest extends WebTestCase
 
     }
 
-    public function providePayloadViolations(): iterable
+    public static function providePayloadViolations(): iterable
     {
         yield 'comment too short' => [
             <<<JSON

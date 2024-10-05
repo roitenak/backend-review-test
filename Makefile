@@ -101,23 +101,29 @@ db-test: var/docker.build
 .PHONY: unit-test
 unit-test: vendor ## Run PhpUnit unit testsuite
 	@$(call log,Running ...)
-	@$(PHP_RUN) bin/phpunit -v --testsuite unit --testdox
+	@$(PHP_RUN) vendor/bin/phpunit --testsuite unit --testdox
+	@$(call log_success,Done)
+
+.PHONY: coverage
+coverage: vendor ## Run PhpUnit unit testsuite
+	@$(call log,Running ...)
+	@$(PHP_RUN) vendor/bin/phpunit --coverage-text
 	@$(call log_success,Done)
 
 .PHONY: func-test
 func-test: var/docker.up ## Run PhpUnit functionnal testsuite
 	@$(call log,Running ...)
-	$(PHP_EXEC) bin/phpunit -v --testsuite func --testdox
+	$(PHP_EXEC) vendor/bin/phpunit --testsuite func --testdox
 	@$(call log_success,Done)
 
 .PHONY: quality-test
-quality-test: var/docker.up ## Run code quality tools
+quality-test: vendor ## Run code quality tools
 	@$(call log,Running ...)
-	$(PHP_EXEC) vendor/bin/php-cs-fixer check --diff src & vendor/bin/rector -n & vendor/bin/phpstan
+	vendor/bin/php-cs-fixer -n check --diff src & vendor/bin/rector process src -n --dry-run & vendor/bin/phpstan -n
 	@$(call log_success,Done)
 
 .PHONY: quality-fix-test
-quality-fix-test: var/docker.up ## Run code quality tools with fixes
+quality-fix-test: vendor ## Run code quality tools with fixes
 	@$(call log,Running ...)
-	$(PHP_EXEC) vendor/bin/php-cs-fixer fix --diff src & vendor/bin/rector & vendor/bin/phpstan
+	vendor/bin/php-cs-fixer -n fix --diff src & vendor/bin/rector process src -n & vendor/bin/phpstan -n
 	@$(call log_success,Done)

@@ -7,7 +7,6 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
@@ -32,11 +31,13 @@
         "friendsofphp/php-cs-fixer": "^3.64",
         "liip/functional-test-bundle": "^4.6",
         "liip/test-fixtures-bundle": "^2.4",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^11.4",
         "rector/rector": "^1.2",
         "symfony/browser-kit": "^6.1",
         "symfony/css-selector": "^6.1",
-        "symfony/phpunit-bridge": "^6.1"
+        "symfony/phpunit-bridge": "^6.1",
+        "symfony/stopwatch": "^6.1",
+        "symfony/web-profiler-bundle": "^6.1"
     },
     "config": {
         "allow-plugins": {

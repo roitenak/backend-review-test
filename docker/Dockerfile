@@ -25,13 +25,15 @@ RUN \
 RUN apk add --no-cache make
 
 # Install php extensions
-RUN apk add --no-cache postgresql-dev bash \
+RUN apk add --no-cache postgresql-dev bash php83-pecl-xdebug \
     && docker-php-ext-install -j$(nproc) pdo_pgsql
 
-# Installing Symfony CLI
+    # Installing Symfony CLI
 RUN apk add --no-cache bash && \
     curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && \
     apk add symfony-cli
+
+COPY conf.d /usr/local/etc/php/conf.d/
 
 USER docker:docker
 
