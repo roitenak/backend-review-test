@@ -6,24 +6,23 @@ namespace App\Type;
 
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\PhpIntegerMappingType;
 use Doctrine\DBAL\Types\Type;
 
-class BigIntToIntType extends Type implements PhpIntegerMappingType
+class BigIntToIntType extends Type
 {
     public const BIGINT_TO_INT = 'bigint_to_int';
 
-    public function getName()
+    public function getName(): string
     {
         return self::BIGINT_TO_INT;
     }
 
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getBigIntTypeDeclarationSQL($column);
     }
 
-    public function getBindingType()
+    public function getBindingType(): int
     {
         return ParameterType::INTEGER;
     }

@@ -28,15 +28,13 @@ class DbalWriteObjectManagerTest extends TestCase
     {
         $repo = new Repo(1, 'test-repo', 'http://example.com/repo');
 
-        $statement = $this->createMock(Statement::class);
-        $statement->expects($this->once())
-            ->method('executeStatement')
-            ->with([1, 'test-repo', 'http://example.com/repo']);
-
         $this->connection->expects($this->once())
-            ->method('prepare')
-            ->with('INSERT INTO repo (id, name, url) VALUES (?, ?, ?) ON CONFLICT (id) DO UPDATE SET name = excluded.name, url = excluded.url')
-            ->willReturn($statement);
+            ->method('executeStatement')
+            ->with(
+                'INSERT INTO repo (id, name, url) VALUES (?, ?, ?) ON CONFLICT (id) DO UPDATE SET name = excluded.name, url = excluded.url',
+                [1, 'test-repo', 'http://example.com/repo']
+            )
+        ;
 
         $this->dbalWriteObjectManager->upsert(Repo::class, [$repo]);
     }
@@ -45,15 +43,13 @@ class DbalWriteObjectManagerTest extends TestCase
     {
         $actor = new Actor(1, 'test-actor', 'http://example.com/actor', 'http://example.com/avatar');
 
-        $statement = $this->createMock(Statement::class);
-        $statement->expects($this->once())
-            ->method('executeStatement')
-            ->with([1, 'test-actor', 'http://example.com/actor', 'http://example.com/avatar']);
-
         $this->connection->expects($this->once())
-            ->method('prepare')
-            ->with('INSERT INTO actor (id, login, url, avatar_url) VALUES (?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET login = excluded.login, url = excluded.url, avatar_url = excluded.avatar_url')
-            ->willReturn($statement);
+            ->method('executeStatement')
+            ->with(
+                'INSERT INTO actor (id, login, url, avatar_url) VALUES (?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET login = excluded.login, url = excluded.url, avatar_url = excluded.avatar_url',
+                [1, 'test-actor', 'http://example.com/actor', 'http://example.com/avatar']
+            )
+        ;
 
         $this->dbalWriteObjectManager->upsert(Actor::class, [$actor]);
     }
@@ -64,15 +60,13 @@ class DbalWriteObjectManagerTest extends TestCase
         $actor = new Actor(1, 'test-actor', 'http://example.com/actor', 'http://example.com/avatar');
         $event = new Event(1, 'COM', $actor, $repo, ['payload' => 'value'], new \DateTimeImmutable(), 'comment');
 
-        $statement = $this->createMock(Statement::class);
-        $statement->expects($this->once())
-            ->method('executeStatement')
-            ->with([1, 'COM', 1, 1, 1, '{"payload":"value"}', $event->createAt->format('c'), 'comment']);
-
         $this->connection->expects($this->once())
-            ->method('prepare')
-            ->with('INSERT INTO event (id, type, count, repo_id, actor_id, payload, create_at, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING')
-            ->willReturn($statement);
+            ->method('executeStatement')
+            ->with(
+                'INSERT INTO event (id, type, count, repo_id, actor_id, payload, create_at, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING',
+                [1, 'COM', 1, 1, 1, '{"payload":"value"}', $event->createAt->format('c'), 'comment']
+            )
+        ;
 
         $this->dbalWriteObjectManager->upsert(Event::class, [$event]);
     }

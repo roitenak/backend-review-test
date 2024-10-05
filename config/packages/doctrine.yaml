@@ -34,6 +34,9 @@ when@prod:
             result_cache_driver:
                 type: pool
                 pool: doctrine.result_cache_pool
+            metadata_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
 
     framework:
         cache:

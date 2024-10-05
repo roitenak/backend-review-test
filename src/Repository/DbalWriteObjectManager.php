@@ -40,6 +40,10 @@ class DbalWriteObjectManager
             throw new \InvalidArgumentException(sprintf('Class %s is not supported', $class));
         }
 
+        if (empty($objects)) {
+            return;
+        }
+
         $sql = self::SQL_INSERT[$class];
         $placeholders = array_fill(0, count($objects), self::SQL_PLACEHOLDERS[$class]);
         $sql .= implode(', ', $placeholders);
@@ -50,8 +54,7 @@ class DbalWriteObjectManager
             $values = array_merge($values, array_values($object->toArray()));
         }
 
-        $stmt = $this->connection->prepare($sql);
-        $stmt->executeStatement($values);
+        $this->connection->executeStatement($sql, $values);
     }
 
     private function supports(string $class): bool
