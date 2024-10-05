@@ -30,11 +30,11 @@ class GHArchiveClient
                     continue;
                 }
 
-                $file->fwrite($chunk->getContent());
-
                 if ($chunk->isLast()) {
                     break;
                 }
+
+                $file->fwrite($chunk->getContent());
             }
         } catch (\Exception $e) {
             throw new \RuntimeException('Failed to download events: '.$e->getMessage(), 0, $e);

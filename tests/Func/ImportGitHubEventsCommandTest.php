@@ -32,8 +32,50 @@ class ImportGitHubEventsCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('2 events, 0 discarded, 0 errors.', $output);
+        $this->assertStringContainsString('3 events, 1 discarded, 0 errors.', $output);
 
         unlink('./2024-10-01-10.json.gz');
+    }
+
+    public function testInvalidDate(): void
+    {
+        self::bootKernel();
+        $application = new Application(self::$kernel);
+
+        $command = $application->find('app:import-github-events');
+        $commandTester = new CommandTester($command);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $commandTester->execute([
+            'date' => '2024-10-01-10',
+            'hour' => '10',
+            '--env' => 'test',
+        ]);
+
+        $this->assertSame(1, $commandTester->getStatusCode());
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Invalid date format. Please use Y-m-d format.', $output);
+    }
+
+    public function testInvalidHour(): void
+    {
+        self::bootKernel();
+        $application = new Application(self::$kernel);
+
+        $command = $application->find('app:import-github-events');
+        $commandTester = new CommandTester($command);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $commandTester->execute([
+            'date' => '2024-10-01',
+            'hour' => '25',
+            '--env' => 'test',
+        ]);
+
+        $this->assertSame(1, $commandTester->getStatusCode());
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Invalid hour format. Please provide an hour between 0 and 23.', $output);
     }
 }

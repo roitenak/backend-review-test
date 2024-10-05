@@ -35,6 +35,8 @@ class GHArchiveClientTest extends TestCase
         $response = $this->createMock(ResponseInterface::class);
 
         $chunk = $this->createMock(ChunkInterface::class);
+        $timeoutChunk = $this->createMock(ChunkInterface::class);
+        $lastChunk = $this->createMock(ChunkInterface::class);
 
         $this->httpClient
             ->expects($this->once())
@@ -46,12 +48,7 @@ class GHArchiveClientTest extends TestCase
             ->expects($this->once())
             ->method('stream')
             ->with($response)
-            ->willReturn(new ResponseStream($this->createGenerator([$chunk])));
-
-        $chunk
-            ->expects($this->once())
-            ->method('isTimeout')
-            ->willReturn(false);
+            ->willReturn(new ResponseStream($this->createGenerator([$chunk, $timeoutChunk, $lastChunk])));
 
         $chunk
             ->expects($this->once())
@@ -60,8 +57,33 @@ class GHArchiveClientTest extends TestCase
 
         $chunk
             ->expects($this->once())
+            ->method('isTimeout')
+            ->willReturn(false);
+
+        $chunk
+            ->expects($this->once())
             ->method('getContent')
             ->willReturn("{\"key\":\"test content\"}");
+
+        $timeoutChunk
+            ->expects($this->once())
+            ->method('isTimeout')
+            ->willReturn(true);
+
+        $lastChunk
+            ->expects($this->once())
+            ->method('isTimeout')
+            ->willReturn(false);
+
+        $lastChunk
+            ->expects($this->once())
+            ->method('isLast')
+            ->willReturn(true);
+
+        $lastChunk
+            ->expects($this->never())
+            ->method('getContent');
+
 
         $result = $this->ghArchiveClient->downloadEvents($date, $hour, $options);
 
@@ -70,6 +92,23 @@ class GHArchiveClientTest extends TestCase
         $this->assertStringEqualsFile($destination, "{\"key\":\"test content\"}");
 
         unlink($destination);
+    }
+
+    public function testException(): void
+    {
+        $date = '2023-10-01';
+        $hour = '00';
+        $options = [];
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('stream')
+            ->willThrowException(new \Exception('Failed to download events'));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to download events');
+
+        $this->ghArchiveClient->downloadEvents($date, $hour, $options);
     }
 
     private function createGenerator(array $chunks): \Generator

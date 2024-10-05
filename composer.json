@@ -29,6 +29,7 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "friendsofphp/php-cs-fixer": "^3.64",
+        "infection/infection": "^0.29.6",
         "liip/functional-test-bundle": "^4.6",
         "liip/test-fixtures-bundle": "^2.4",
         "phpunit/phpunit": "^11.4",
@@ -42,6 +43,7 @@
     "config": {
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
+            "infection/extension-installer": true,
             "symfony/flex": true,
             "symfony/runtime": true
         },
