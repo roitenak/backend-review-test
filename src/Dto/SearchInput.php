@@ -6,5 +6,9 @@ class SearchInput
 {
     public \DateTimeImmutable $date;
 
-    public string $keyword;
+    public function __construct(
+        public string $keyword = '',
+    ) {
+        $this->date ??= new \DateTimeImmutable();
+    }
 }
