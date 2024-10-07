@@ -40,8 +40,8 @@ class EventNormalizer implements DenormalizerInterface
         if (isset($data['type']) && array_key_exists($data['type'], self::EVENT_TYPE_MAP)) {
             match ($data['type']) {
                 self::GH_EVENT_TYPE_COMMIT_COMMENT,
-                self::GH_EVENT_TYPE_PULL_REQUEST_REVIEW_COMMENT => $data['comment'] = $data['payload']['comment']['body'],
-                self::GH_EVENT_TYPE_ISSUE_COMMENT => $data['comment'] = $data['comment']['body'],
+                self::GH_EVENT_TYPE_PULL_REQUEST_REVIEW_COMMENT,
+                self::GH_EVENT_TYPE_ISSUE_COMMENT => $data['comment'] = $data['payload']['comment']['body'],
                 default => null,
             };
 

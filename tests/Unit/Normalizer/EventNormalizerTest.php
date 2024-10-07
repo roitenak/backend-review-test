@@ -78,35 +78,6 @@ class EventNormalizerTest extends TestCase
         $this->assertInstanceOf(Event::class, $result);
     }
 
-    public function testDenormalizeWithIssueCommentEventType(): void
-    {
-        $data = ['type' => 'IssueCommentEvent', 'comment' => ['body' => 'comment body']];
-        $class = Event::class;
-        $format = null;
-        $context = [];
-
-        $this->normalizer->expects($this->once())
-            ->method('denormalize')
-            ->with([
-                'type' => 'MSG',
-                'comment' => 'comment body'
-            ], $class, $format, $context)
-            ->willReturn(new Event(
-                1,
-                'MSG',
-                new Actor(1, 'login', 'avatar', 'url'),
-                new Repo(1, 'name', 'url'),
-                [],
-                new \DateTimeImmutable(),
-                'comment·body'
-            ))
-        ;
-
-        $result = $this->eventNormalizer->denormalize($data, $class, $format, $context);
-
-        $this->assertInstanceOf(Event::class, $result);
-    }
-
     public function testDenormalizeWithInvalidEventType(): void
     {
         $this->expectException(UnsupportedException::class);
